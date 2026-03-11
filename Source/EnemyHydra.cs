@@ -97,7 +97,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         { 
             get
             {
-                return Shared.InstanceCount < Options.HydraMaxFromOne && (NoDupeTime < 0.0f || Depth == 0);
+                return Shared.InstanceCount < Options.HydraMaxFromOne.Value && (NoDupeTime < 0.0f || Depth == 0);
             }
         }
 
@@ -255,23 +255,23 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
             if (Eid.enemyType == EnemyType.Providence)
             {
-                NoDupeTime = Options.HydraBossWaitTime;
+                NoDupeTime = Options.HydraBossWaitTime.Value;
             }
             else
             {
                 switch (GameplayRank)
                 {
                     case EnemyGameplayRank.Normal:
-                        NoDupeTime = Options.HydraDefaultWaitTime;
+                        NoDupeTime = Options.HydraDefaultWaitTime.Value;
                         break;
                     case EnemyGameplayRank.Miniboss:
-                        NoDupeTime = Options.HydraMiniBossWaitTime;
+                        NoDupeTime = Options.HydraMiniBossWaitTime.Value;
                         break;
                     case EnemyGameplayRank.Boss:
-                        NoDupeTime = Options.HydraBossWaitTime;
+                        NoDupeTime = Options.HydraBossWaitTime.Value;
                         break;
                     case EnemyGameplayRank.Ultraboss:
-                        NoDupeTime = Options.HydraUltraBossWaitTime;
+                        NoDupeTime = Options.HydraUltraBossWaitTime.Value;
                         break;
                 }
             }
@@ -279,7 +279,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             var newHealth = Enemy.InitialHealth;
             for (int i = 0; i < Depth; i++)
             {
-                newHealth *= Options.HydraHealthDecayScale;
+                newHealth *= Options.HydraHealthDecayScale.Value;
             }
             
             Enemy.Health = newHealth;
@@ -384,7 +384,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             Eid.dontCountAsKills = true;
             PreDeath?.Invoke();
             
-            if (Depth == 0 && Shared.CountAsKill && !CybergrindAdditions.CybergrindActive)
+            if (Depth == 0 && Shared.CountAsKill && !Cybergrind.IsActive)
             {
                 ContributeToActivateNextWave();
             }
@@ -406,7 +406,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 {
                     StatsManager.Instance.kills += 1;
 
-                    if (Shared.CountAsKill && CybergrindAdditions.CybergrindActive)
+                    if (Shared.CountAsKill && Cybergrind.IsActive)
                     {
                         ContributeToActivateNextWave();
                     }
@@ -421,17 +421,17 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 switch (GameplayRank)
                 {
                     case EnemyGameplayRank.Normal:
-                        StyleHUD.Instance.AddPoints(Options.HydraKillBonus, "<color=#a2beff>HYDRA KILL</color>", null, Eid);
+                        StyleHUD.Instance.AddPoints(Options.HydraKillBonus.Value, "<color=#a2beff>HYDRA KILL</color>", null, Eid);
                         break;
                     case EnemyGameplayRank.Miniboss:
-                        StyleHUD.Instance.AddPoints(Options.HydraMiniBossKillBonus, "<color=#8d96fe>KINDA BIG HYDRA KILL</color>", null, Eid);
+                        StyleHUD.Instance.AddPoints(Options.HydraMiniBossKillBonus.Value, "<color=#8d96fe>KINDA BIG HYDRA KILL</color>", null, Eid);
                         break;
                     case EnemyGameplayRank.Boss:
-                        StyleHUD.Instance.AddPoints(Options.HydraBossKillBonus, "<color=#8a2af7>BIG HYDRA KILL</color>", null, Eid);
+                        StyleHUD.Instance.AddPoints(Options.HydraBossKillBonus.Value, "<color=#8a2af7>BIG HYDRA KILL</color>", null, Eid);
                         break;
                     case EnemyGameplayRank.Ultraboss:
                         StyleHUD.Instance.AddPoints(0, "<color=#ffdb00HOW??</color>", null, Eid);
-                        StyleHUD.Instance.AddPoints(Options.HydraUltraBossKillBonus, "<color=#ffdb00>ULTRA HYDRA KILL</color>", null, Eid);
+                        StyleHUD.Instance.AddPoints(Options.HydraUltraBossKillBonus.Value, "<color=#ffdb00>ULTRA HYDRA KILL</color>", null, Eid);
                         break;
                     default:
                         throw new InvalidOperationException();

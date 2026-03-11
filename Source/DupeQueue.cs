@@ -45,7 +45,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 return;
             }
 
-            for (int i = InstantiatedThisTick; (i < Options.HydraMaxPerUpdate) && (DupeQueue.Count != 0); i++)
+            for (int i = InstantiatedThisTick; (i < Options.HydraMaxPerUpdate.Value) && (DupeQueue.Count != 0); i++)
             {
                 var dupeInfo = DupeQueue.Dequeue();
 
@@ -58,7 +58,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
         public static void EnqueueDupe(QueuedDupeInfo dupeInfo)
         {
-            if (InstantiatedThisTick >= Options.HydraMaxPerUpdate)
+            if (InstantiatedThisTick >= Options.HydraMaxPerUpdate.Value)
             {
                 DupeQueue.Enqueue(dupeInfo);
             }

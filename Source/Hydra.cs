@@ -21,6 +21,9 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
             HydraDupeQueue.Initialize();
             EnemyHydra.Initialize();
+
+            Options.Config = Config;
+            Options.Initialize();
         }
 
         protected void Start()
@@ -37,6 +40,14 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
         }
         
+        protected void OnApplicationFocus(bool hasFocus)
+        {
+            if (hasFocus)
+            {
+                Config.Reload();
+            }
+        }
+
         private void RegisterCheats(CheatsManager cheatsManager)
         {
             cheatsManager.RegisterCheat(new ToggleCheat(
