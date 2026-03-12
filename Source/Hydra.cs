@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using BepInEx;
 using System;
+using System.IO;
 
 namespace Nyxpiri.ULTRAKILL.Hydra
 {
@@ -24,6 +25,11 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
             Options.Config = Config;
             Options.Initialize();
+
+            if (!File.Exists(Config.ConfigFilePath))
+            {
+                Config.Save();
+            }
         }
 
         protected void Start()
