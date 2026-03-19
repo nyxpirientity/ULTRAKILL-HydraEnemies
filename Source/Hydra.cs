@@ -10,7 +10,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         public const string HydraMode = "nyxpiri.hydra-mode";
     }
     
-    [BepInPlugin("com.nyxpiri.bepinex.plugins.ultrakill.hydra", "Hydra", "0.0.0.1")]
+    [BepInPlugin("nyxpiri.ultrakill.hydra", "Hydra", "0.0.0.1")]
     [BepInProcess("ULTRAKILL.exe")]
     public class Hydra : BaseUnityPlugin
     {

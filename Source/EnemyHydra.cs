@@ -237,6 +237,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 return;
             }
 
+
             Assert.IsTrue(Depth >= 0, $"For object by name {gameObject.name}");
             Assert.IsNotNull(Shared, $"For object by name {gameObject.name} shared was null! Shared Name: '{SharedName}'");
 
@@ -276,13 +277,16 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 }
             }
 
-            var newHealth = Enemy.InitialHealth;
-            for (int i = 0; i < Depth; i++)
+            if (NyxLib.Cheats.Enabled)
             {
-                newHealth *= Options.HydraHealthDecayScale.Value;
+                var newHealth = Enemy.Health;
+                for (int i = 0; i < Depth; i++)
+                {
+                    newHealth *= Options.HydraHealthDecayScale.Value;
+                }
+                
+                Enemy.Health = newHealth;
             }
-            
-            Enemy.Health = newHealth;
 
             if (Depth > 0)
             {
