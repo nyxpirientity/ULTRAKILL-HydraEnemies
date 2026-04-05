@@ -5,6 +5,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 {
     public static class Options
     {
+        public static ConfigEntry<bool> LogDebugInfo = null;
         public static ConfigEntry<float> HydraHealthDecayScale = null;
         public static ConfigEntry<float> HydraDefaultWaitTime = null;
         public static ConfigEntry<float> HydraMiniBossWaitTime = null;
@@ -42,6 +43,8 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             HydraMiniBossKillBonus = Config.Bind($"Style", "HydraMiniBossKillBonus", 50);
             HydraBossKillBonus = Config.Bind($"Style", "HydraBossKillBonus", 100);
             HydraUltraBossKillBonus = Config.Bind($"Style", "HydraUltraBossKillBonus", 1000);
+
+            LogDebugInfo = Config.Bind("Diagnostics", "LogDebugInfo", false);
         }
         
         internal static ConfigFile Config = null;
