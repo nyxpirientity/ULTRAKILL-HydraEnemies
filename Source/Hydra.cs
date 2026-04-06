@@ -2,6 +2,7 @@
 using BepInEx;
 using System;
 using System.IO;
+using Nyxpiri.ULTRAKILL.NyxLib;
 
 namespace Nyxpiri.ULTRAKILL.Hydra
 {
@@ -64,8 +65,14 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 },
                 onEnable: (cheat, manager) =>
                 {
+                    EnemyPrefabStore.RequestInstanceStoreCapacity(5);
                 }
             ), "MITOSIS");
+
+            if (NyxLib.Cheats.IsCheatEnabled(Cheats.HydraMode))
+            {
+                EnemyPrefabStore.RequestInstanceStoreCapacity(5);
+            }
         }
     }
 }
