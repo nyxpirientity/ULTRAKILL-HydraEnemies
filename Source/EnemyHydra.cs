@@ -434,7 +434,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                         StyleHUD.Instance.AddPoints(Options.HydraBossKillBonus.Value, "<color=#8a2af7>BIG HYDRA KILL</color>", null, Eid);
                         break;
                     case EnemyGameplayRank.Ultraboss:
-                        StyleHUD.Instance.AddPoints(0, "<color=#ffdb00HOW??</color>", null, Eid);
+                        StyleHUD.Instance.AddPoints(0, "<color=#ffdb00>HOW??</color>", null, Eid);
                         StyleHUD.Instance.AddPoints(Options.HydraUltraBossKillBonus.Value, "<color=#ffdb00>ULTRA HYDRA KILL</color>", null, Eid);
                         break;
                     default:
