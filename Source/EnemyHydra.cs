@@ -56,14 +56,14 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             private void Deactivate()
             {
                 Assert.IsTrue(Active);
-                
+
                 Log.Debug($"EnemyHydraMod.SharedData '{name}' with creator '{CreatorName}' deactivated!");
 
                 OnDeactivated?.Invoke();
 
                 Active = false;
             }
-            
+
             private void Activate()
             {
                 Assert.IsFalse(Active);
@@ -93,8 +93,8 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             }
         }
 
-        public bool CanDuplicate 
-        { 
+        public bool CanDuplicate
+        {
             get
             {
                 return Shared.InstanceCount < Options.HydraMaxFromOne.Value && (NoDupeTime < 0.0f || Depth == 0);
@@ -113,7 +113,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
         public bool HydraKilled { get; private set; } = false;
         public bool HydraDuped { get; private set; } = false;
-        public int SharedIdx {get; private set; } = -1;
+        public int SharedIdx { get; private set; } = -1;
         public string SharedName { get; private set; } = null;
         public static int MonoRegistrarIdx { get; private set; }
 
@@ -126,7 +126,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         {
             TryUnregisterWithShared();
         }
-                
+
         protected void OnEnable()
         {
             if (SharedName == null)
@@ -143,12 +143,12 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             {
                 return;
             }
-            
+
             TryUnregisterWithShared();
         }
 
         private void TryUnregisterWithShared()
-        {            
+        {
             if (ExcludedFromHydraCheat)
             {
                 return;
@@ -157,7 +157,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             Assert.IsNotNull(Shared, $"Shared was null! Shared Name: '{SharedName}'");
 
             if (ContributesToInstanceCount)
-            {            
+            {
                 Log.Debug($"{name}: unregistered with shared!");
 
                 if (!Eid.dead)
@@ -178,7 +178,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 {
                     Destroy(Shared);
                 }*/
-                
+
                 MusicManager.Instance?.PlayCleanMusic();
             }
         }
@@ -194,12 +194,12 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             {
                 return;
             }
-            
+
             if (Eid.Dead)
             {
                 return;
             }
-            
+
             if (NoDupeTime >= 0.0f)
             {
                 NoDupeTime -= Time.deltaTime / Mathf.Max(1.0f, (Shared.InstanceCount * 0.3f) + 0.667f);
@@ -207,7 +207,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 if (NoDupeTime <= 0.0f)
                 {
                     NoDupeTime = -1.0f;
-                }                
+                }
             }
         }
 
@@ -284,7 +284,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 {
                     newHealth *= Options.HydraHealthDecayScale.Value;
                 }
-                
+
                 Enemy.Health = newHealth;
             }
 
@@ -296,7 +296,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 }
                 else
                 {
-                    gameObject.AddComponent<DestroyOnCheckpointRestart>();                    
+                    gameObject.AddComponent<DestroyOnCheckpointRestart>();
                 }
             }
 
@@ -348,14 +348,15 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 ContributesToInstanceCount = true;
             }
         }
-        
+
+        private static FieldAccess<TimeController, GameObject> parryLightFA = new FieldAccess<TimeController, GameObject>("parryLight");
         public void NotifyOfDeath(bool instakill)
         {
             if (NotifiedOfDeathCalled)
             {
                 return;
             }
-            
+
             Log.Debug($"{name}: EnemyHydraMod::NotifyOfDeath called with instakill as {instakill}");
 
             NotifiedOfDeathCalled = true;
@@ -387,7 +388,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
             Eid.dontCountAsKills = true;
             PreDeath?.Invoke();
-            
+
             if (Depth == 0 && Shared.CountAsKill && !Cybergrind.IsActive)
             {
                 ContributeToActivateNextWave();
@@ -398,7 +399,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 TryEnqueueDupe(false);
                 TryEnqueueDupe(true);
             }
-            
+
             TryUnregisterWithShared();
 
             if (!HydraDuped && Shared.InstanceCount == 0)
@@ -416,10 +417,12 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                     }
                 }
 
-                TimeScale.ModDisableHitstop = true;
-                TimeScale.Controller.ParryFlash();
-                TimeScale.Controller.ParryFlash();
-                TimeScale.ModDisableHitstop = false;
+                GameObject parrySound = UnityEngine.Object.Instantiate(parryLightFA.GetValue(TimeController.Instance), PlayerTracker.Instance.GetTarget().position, Quaternion.identity, PlayerTracker.Instance.GetTarget());
+
+                if (parrySound.TryGetComponent<Light>(out var light))
+                {
+                    light.enabled = false;
+                }
 
                 Log.Debug($"{name}: About to try give points for hydra kill...");
                 switch (GameplayRank)
@@ -466,7 +469,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             {
                 return;
             }
-            
+
             if (!CanDuplicate)
             {
                 return;
@@ -479,7 +482,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             Log.Debug($"{name}: Now HydraDuped by TryEnqueueDupe");
             HydraDuped = true;
             HydraDupeQueue.QueuedDupeInfo dupeInfo = new HydraDupeQueue.QueuedDupeInfo();
-            
+
             if (Eid.enemyType == EnemyType.Drone)
             {
                 dupeInfo.Position = Eid.drone.GetComponent<Rigidbody>().transform.position;
@@ -488,7 +491,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             {
                 dupeInfo.Position = transform.position;
             }
-            
+
             dupeInfo.Rotation = transform.rotation;
             dupeInfo.LocalScale = transform.localScale;
             dupeInfo.SharedData = Shared;
@@ -526,7 +529,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                     default:
                         break;
                 }
-                
+
                 if (GetComponent<CancerousRodent>() != null)
                 {
                     additionalOffsetScalar = 0.01f;
@@ -545,7 +548,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             Shared = ScriptableObject.CreateInstance<SharedData>();
             TryRegisterWithShared();
             Shared.Bounds = EnemyUtils.SolveEnemyBounds(gameObject);
-                    
+
             if (GetComponent<DroneFlesh>() != null)
             {
                 Shared.EnemySpecificShared = new FleshDroneHydra.SharedData();
@@ -555,11 +558,11 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             {
                 case EnemyType.FleshPanopticon:
                     Shared.EnemySpecificShared = new FleshPanopticonHydra.SharedData();
-                break;
+                    break;
                 default:
-                break;
+                    break;
             }
-            
+
             Depth = 0;
             Shared.CreatorName = gameObject.name;
             SharedName = Shared.name;
