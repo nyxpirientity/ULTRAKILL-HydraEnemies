@@ -117,7 +117,8 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         public string SharedName { get; private set; } = null;
         public static int MonoRegistrarIdx { get; private set; }
 
-        private bool ExcludedFromHydraCheat = false;
+        public bool ExcludedFromHydraCheat => _excludedFromHydraCheat || ((Eid?.puppet).GetValueOrDefault(false) && Eid?.enemyType != EnemyType.Puppet);
+        private bool _excludedFromHydraCheat = false;
 
         private float NoDupeTime = 0.0f;
         private bool NotifiedOfDeathCalled = false;
@@ -226,7 +227,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         {
             if (Eid.enemyType == EnemyType.Deathcatcher || Eid.enemyType == EnemyType.Idol || (Eid.enemyType == EnemyType.Centaur && Eid.gameObject.name.Contains("rain", StringComparison.OrdinalIgnoreCase)) || Eid.enemyType == EnemyType.V2Second || Enemy.UniquelySolo)
             {
-                ExcludedFromHydraCheat = true;
+                _excludedFromHydraCheat = true;
                 return;
             }
 
@@ -236,7 +237,6 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             {
                 return;
             }
-
 
             Assert.IsTrue(Depth >= 0, $"For object by name {gameObject.name}");
             Assert.IsNotNull(Shared, $"For object by name {gameObject.name} shared was null! Shared Name: '{SharedName}'");
@@ -375,11 +375,6 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 Eid = GetComponent<EnemyIdentifier>();
             }
 
-            if (Eid.Dead)
-            {
-                return;
-            }
-
             if (!ContributesToInstanceCount)
             {
                 return;
@@ -415,6 +410,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 {
                     StatsManager.Instance.kills += 1;
                     ContributeToActivateNextWave();
+                    Enemy.Enemy.gz.EnemyDeath(Eid);
 
                     if (Shared.CountAsKill && Cybergrind.IsActive)
                     {
@@ -429,21 +425,23 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                     light.enabled = false;
                 }
 
+                parrySound.GetComponentInChildren<AudioSource>().volume *= Options.HydraKillSoundVolume.Value;
+
                 Log.Debug($"{name}: About to try give points for hydra kill...");
                 switch (GameplayRank)
                 {
                     case EnemyGameplayRank.Normal:
-                        StyleHUD.Instance.AddPoints(Options.HydraKillBonus.Value, "<color=#a2beff>HYDRA KILL</color>", null, Eid);
+                        StyleHUD.Instance.AddPoints(10, "<color=#a2beff>HYDRA KILL</color>", null, Eid);
                         break;
                     case EnemyGameplayRank.Miniboss:
-                        StyleHUD.Instance.AddPoints(Options.HydraMiniBossKillBonus.Value, "<color=#8d96fe>KINDA BIG HYDRA KILL</color>", null, Eid);
+                        StyleHUD.Instance.AddPoints(50, "<color=#8d96fe>KINDA BIG HYDRA KILL</color>", null, Eid);
                         break;
                     case EnemyGameplayRank.Boss:
-                        StyleHUD.Instance.AddPoints(Options.HydraBossKillBonus.Value, "<color=#8a2af7>BIG HYDRA KILL</color>", null, Eid);
+                        StyleHUD.Instance.AddPoints(100, "<color=#8a2af7>BIG HYDRA KILL</color>", null, Eid);
                         break;
                     case EnemyGameplayRank.Ultraboss:
                         StyleHUD.Instance.AddPoints(0, "<color=#ffdb00>HOW??</color>", null, Eid);
-                        StyleHUD.Instance.AddPoints(Options.HydraUltraBossKillBonus.Value, "<color=#ffdb00>ULTRA HYDRA KILL</color>", null, Eid);
+                        StyleHUD.Instance.AddPoints(1000, "<color=#ffdb00>ULTRA HYDRA KILL</color>", null, Eid);
                         break;
                     default:
                         throw new InvalidOperationException();
@@ -464,7 +462,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
         private void ContributeToActivateNextWave()
         {
-            Enemy.PrefabStore.ActivateNextWave?.AddDeadEnemy();
+            Enemy.Cloning.ActivateNextWave?.AddDeadEnemy();
         }
 
         private void TryEnqueueDupe(bool isB)
@@ -502,7 +500,9 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             dupeInfo.Depth = Depth + 1;
             dupeInfo.EnemyType = Eid.enemyType;
             dupeInfo.BossBar = GetComponent<BossHealthBar>() != null;
-            dupeInfo.InstanceStore = Enemy.PrefabStore.Instances;
+            dupeInfo.CloneStore = Enemy.Cloning.Store;
+            dupeInfo.CloneStore.AddReservation();
+            dupeInfo.CloneParent = Enemy.Cloning.ActivateNextWave?.transform;
 
             if (Eid.enemyType == EnemyType.Sisyphus)
             {

@@ -43,6 +43,11 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                     return;
                 }
             }
+
+            if (QueuedDeath)
+            {
+                Hydra.Eid.InstaKill();
+            }
         }
 
         private void RegisterWithPrison()
@@ -51,7 +56,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             {
                 return;
             }
-            
+
             if (Hydra.Eid.dead)
             {
                 return;
@@ -69,6 +74,12 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             }
 
             Hydra.Eid.InstaKill();
+        }
+
+        bool QueuedDeath = false;
+        internal void QueueDeath()
+        {
+            QueuedDeath = true;
         }
     }
 }

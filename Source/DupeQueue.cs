@@ -12,9 +12,10 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             public Quaternion Rotation;
             public Vector3 LocalScale;
             public EnemyHydra.SharedData SharedData;
-            public EnemyPrefabStore.InstanceStore InstanceStore;
+            public EnemyCloneStore CloneStore;
             public int Depth;
             public EnemyType EnemyType;
+            public Transform CloneParent;
             public bool BossBar;
         }
 
@@ -107,7 +108,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         public static void InstantiateDupe(QueuedDupeInfo dupeInfo)
         {
             InstantiatedThisTick += 1;
-            var dupeGo = dupeInfo.InstanceStore.GetNewInstance(dupeInfo.EnemyType == EnemyType.FleshPanopticon && SceneHelper.CurrentScene == "Level P-2");
+            var dupeGo = dupeInfo.CloneStore.GetNewInstance(dupeInfo.CloneParent);
             GameObject malFaceDupeGo = null;
             EnemyComponents enemy;
 
@@ -144,6 +145,8 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             {
                 eid.BossBar(true);
             }
+
+            dupeInfo.CloneStore.RemoveReservation();
         }
     }
 }

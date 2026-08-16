@@ -19,7 +19,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         {
             Hydra = GetComponent<EnemyHydra>();
             Shared = (SharedData)(Hydra.Shared.EnemySpecificShared);
-            
+
             if (Hydra.Depth > 0 && Shared.NumLights > 2)
             {
                 var lights = transform.GetComponentsInChildren<Light>();
@@ -50,7 +50,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             }
 
             FleshPrison fleshPrison = GetComponent<FleshPrison>();
-            
+
             foreach (var drone in fleshPrison.currentDrones)
             {
                 if (drone == null)
@@ -63,11 +63,11 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                     drone.GetComponent<EnemyIdentifier>()?.InstaKill();
                     continue;
                 }
-                
+
                 drone.GetComponent<FleshDroneHydra>().NotifyPrisonDied();
             }
         }
-        
+
         private void FixedUpdate()
         {
             FleshPrison fleshPrison = GetComponent<FleshPrison>();
@@ -82,15 +82,20 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                     }
 
                     var fdHydra = drone.GetComponent<FleshDroneHydra>();
-                    
+
                     if (fdHydra != null)
                     {
                         if (fdHydra.Shared == null)
                         {
                             continue;
                         }
-                        
+
                         fdHydra.Shared.Prison = fleshPrison;
+                    }
+
+                    if (!ContributingLights)
+                    {
+                        fdHydra.QueueDeath();
                     }
                 }
             }

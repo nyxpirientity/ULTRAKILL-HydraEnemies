@@ -11,16 +11,13 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         public static ConfigEntry<float> HydraMiniBossWaitTime = null;
         public static ConfigEntry<float> HydraBossWaitTime = null;
         public static ConfigEntry<float> HydraUltraBossWaitTime = null;
+        public static ConfigEntry<float> HydraKillSoundVolume = null;
         public static ConfigEntry<int> HydraMaxDepth = null;
         public static ConfigEntry<int> HydraMaxFromOneBoss = null;
         public static ConfigEntry<int> HydraMaxFromOne = null;
         public static ConfigEntry<int> HydraMaxPerUpdate = null;
         public static ConfigEntry<int> HydraPrefabPoolCapacity = null;
         public static ConfigEntry<int> HydraPrefabPoolGrowPerUpdate = null;
-        public static ConfigEntry<int> HydraKillBonus = null;
-        public static ConfigEntry<int> HydraMiniBossKillBonus = null;
-        public static ConfigEntry<int> HydraBossKillBonus = null;
-        public static ConfigEntry<int> HydraUltraBossKillBonus = null;
 
         public static void Initialize()
         {
@@ -39,14 +36,11 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             HydraPrefabPoolCapacity = Config.Bind($"Performance", "HydraPrefabPoolCapacity", 20);
             HydraPrefabPoolGrowPerUpdate = Config.Bind($"Performance", "HydraPrefabPoolGrowPerUpdate", 3);
 
-            HydraKillBonus = Config.Bind($"Style", "HydraKillBonus", 10);
-            HydraMiniBossKillBonus = Config.Bind($"Style", "HydraMiniBossKillBonus", 50);
-            HydraBossKillBonus = Config.Bind($"Style", "HydraBossKillBonus", 100);
-            HydraUltraBossKillBonus = Config.Bind($"Style", "HydraUltraBossKillBonus", 1000);
+            HydraKillSoundVolume = Config.Bind($"Cosmetic", "HydraKillSoundVolume", 2.0f);
 
             LogDebugInfo = Config.Bind("Diagnostics", "LogDebugInfo", false);
         }
-        
+
         internal static ConfigFile Config = null;
     }
 }

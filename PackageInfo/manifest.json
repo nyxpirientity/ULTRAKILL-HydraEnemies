@@ -1,0 +1,10 @@
+{
+    "name": "Hydra",
+    "version_number": "0.0.0",
+    "website_url": "https://github.com/nyxpirientity/ULTRAKILL-HydraEnemies",
+    "description": "Kill one enemy, two more spawn. Kill those quickly enough and the enemy could be slain.",
+    "dependencies": [
+        "Nyxpiri-NyxLib-0.3.0",
+        "BepInEx-BepInExPack-5.4.2305"
+    ]
+}
