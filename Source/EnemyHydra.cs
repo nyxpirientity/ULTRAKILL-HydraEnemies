@@ -258,6 +258,10 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             {
                 NoDupeTime = Options.HydraBossWaitTime.Value;
             }
+            else if (Eid.enemyType == EnemyType.MirrorReaper)
+            {
+                NoDupeTime = Eid.isBoss ? Options.HydraUltraBossWaitTime.Value : Options.HydraBossWaitTime.Value;
+            }
             else
             {
                 switch (GameplayRank)
@@ -391,7 +395,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
             if (Depth == 0 && Shared.CountAsKill && !Cybergrind.IsActive)
             {
-                ContributeToActivateNextWave();
+                // ContributeToActivateNextWave();
             }
 
             if (!instakill)
@@ -410,10 +414,11 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 if (Shared.CountAsKill)
                 {
                     StatsManager.Instance.kills += 1;
+                    ContributeToActivateNextWave();
 
                     if (Shared.CountAsKill && Cybergrind.IsActive)
                     {
-                        ContributeToActivateNextWave();
+                        //ContributeToActivateNextWave();
                     }
                 }
 
@@ -459,8 +464,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
         private void ContributeToActivateNextWave()
         {
-            ActivateNextWave componentInParent = Eid.GetComponentInParent<ActivateNextWave>();
-            componentInParent?.AddDeadEnemy();
+            Enemy.PrefabStore.ActivateNextWave?.AddDeadEnemy();
         }
 
         private void TryEnqueueDupe(bool isB)

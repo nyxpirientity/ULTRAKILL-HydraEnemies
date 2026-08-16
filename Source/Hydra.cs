@@ -3,6 +3,7 @@ using BepInEx;
 using System;
 using System.IO;
 using Nyxpiri.ULTRAKILL.NyxLib;
+using HarmonyLib;
 
 namespace Nyxpiri.ULTRAKILL.Hydra
 {
@@ -10,8 +11,8 @@ namespace Nyxpiri.ULTRAKILL.Hydra
     {
         public const string HydraMode = "nyxpiri.hydra-mode";
     }
-    
-    [BepInPlugin("nyxpiri.ultrakill.hydra", "Hydra", "0.0.0.1")]
+
+    [BepInPlugin("nyxpiri.ultrakill.hydra", "Hydra", "0.0.0")]
     [BepInProcess("ULTRAKILL.exe")]
     public class Hydra : BaseUnityPlugin
     {
@@ -19,13 +20,15 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         {
             Log.Initialize(Logger);
 
-            NyxLib.Cheats.ReadyForCheatRegistration += RegisterCheats; 
+            NyxLib.Cheats.ReadyForCheatRegistration += RegisterCheats;
 
             HydraDupeQueue.Initialize();
             EnemyHydra.Initialize();
 
             Options.Config = Config;
             Options.Initialize();
+
+            Harmony.CreateAndPatchAll(GetType().Assembly);
 
             if (!File.Exists(Config.ConfigFilePath))
             {
@@ -35,6 +38,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
 
         protected void Start()
         {
+            NyxLib.LevelModder.RegisterLevelMod<P2Additions>("Level P-2");
         }
 
         protected void Update()
@@ -46,7 +50,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         {
 
         }
-        
+
         protected void OnApplicationFocus(bool hasFocus)
         {
             if (hasFocus)
@@ -58,7 +62,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         private void RegisterCheats(CheatsManager cheatsManager)
         {
             cheatsManager.RegisterCheat(new ToggleCheat(
-                "Hydra Mode", 
+                "Hydra Mode",
                 Cheats.HydraMode,
                 onDisable: (cheat) =>
                 {

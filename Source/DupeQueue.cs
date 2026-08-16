@@ -26,7 +26,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 var go = eid.gameObject;
                 var enemy = go.GetComponent<EnemyComponents>();
                 var ehm = enemy.GetHydraComp();
-                
+
                 ehm.NotifyOfDeath(instakill);
             };
 
@@ -72,7 +72,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         {
             var go = enemy.gameObject;
             var ehm = enemy.GetHydraComp();
-            
+
             ehm.NotifyOfDeath(instakill);
         }
 
@@ -97,7 +97,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
             {
                 return;
             }
-            
+
             while (ImmediatelyDupeStack.Count > 0)
             {
                 InstantiateDupe(ImmediatelyDupeStack.Pop());
@@ -107,7 +107,7 @@ namespace Nyxpiri.ULTRAKILL.Hydra
         public static void InstantiateDupe(QueuedDupeInfo dupeInfo)
         {
             InstantiatedThisTick += 1;
-            var dupeGo = dupeInfo.InstanceStore.GetNewInstance();
+            var dupeGo = dupeInfo.InstanceStore.GetNewInstance(dupeInfo.EnemyType == EnemyType.FleshPanopticon && SceneHelper.CurrentScene == "Level P-2");
             GameObject malFaceDupeGo = null;
             EnemyComponents enemy;
 
@@ -123,14 +123,14 @@ namespace Nyxpiri.ULTRAKILL.Hydra
                 Assert.IsNotNull(dupeGo);
                 enemy = dupeGo.GetComponent<EnemyComponents>();
             }
-            
+
             dupeGo.transform.position = dupeInfo.Position;
             dupeGo.transform.rotation = dupeInfo.Rotation;
 
             dupeGo.SetActive(true);
             malFaceDupeGo?.SetActive(true);
             var eid = dupeGo.GetComponent<EnemyIdentifier>();
-            
+
             eid.spawnIn = false;
             eid.timeSinceSpawned = 0.0f;
 
